@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Flight Booking Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        body {
+            background: linear-gradient(112deg, #eef3fa 0%, #b7d1e8 100%);
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .wide-container {
+            max-width: 1440px;
+            margin: 42px auto;
+            background: #fff;
+            border-radius: 22px;
+            box-shadow: 0 4px 32px rgba(22,48,89,0.13);
+            padding: 44px 56px 34px 56px;
+        }
+        @media (max-width: 1200px) {
+            .wide-container {
+                padding: 30px 14px;
+            }
+        }
+        .header-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .header-title {
+            font-size: 2.4em;
+            font-weight: 800;
+            color: #244870;
+            margin-bottom: 0;
+            letter-spacing: -0.02em;
+        }
+        .model-credit {
+            font-size: 1.11em;
+            color: #507fc1;
+            background: rgba(197,221,255,0.22);
+            padding: 10px 24px 10px 18px;
+            border-radius: 12px 12px 0 12px;
+            font-weight: 500;
+            box-shadow: 0 2px 10px 0 rgba(39,109,250,0.06);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .model-credit a {
+            color: #507fc1;
+            font-weight: 600;
+            font-size: 1.14em;
+            text-decoration: none;
+            transition: color 0.2s ease-in-out;
+        }
+        .model-credit a:hover, .model-credit a:focus {
+            color: #2057b3;
+            outline: none;
+        }
+        .model-credit i {
+            font-size: 1.4em;
+        }
+        .subtitle {
+            margin-bottom: 38px;
+            font-size: 1.22em;
+            color: #6180b7;
+            font-weight: 500;
+            text-align: left;
+        }
+        label.form-label {
+            font-weight: 600;
+            font-size: 1.09em;
+            color: #32476c;
+        }
+        .form-control, .form-select {
+            border-radius: 6px;
+            border: 1.1px solid #c5d6ef;
+            font-size: 1em;
+            transition: border .23s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #2979ff;
+            background: #f1f7ff;
+            box-shadow: 0 0 4px #b0ccf7;
+        }
+        .form-text {
+            color: #7c91b2;
+            font-size: 0.93em;
+        }
+        .form-check-input {
+            accent-color: #2979ff;
+        }
+        .row.wide-row {
+            margin-bottom: 26px;
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 24px;
+        }
+        .wide-row > [class^="col-"] {
+            min-width: 0;
+            flex: 1 1 0;
+        }
+        @media (max-width: 991.98px) {
+            .row.wide-row {
+                flex-wrap: wrap;
+                gap: 0;
+            }
+            .wide-row > [class^="col-"] {
+                margin-bottom: 18px;
+            }
+        }
+        .button-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 25px;
+        }
+        .btn {
+            border-radius: 7px;
+            font-size: 1.11em;
+            padding: 13px;
+            font-weight: 600;
+            box-shadow: 0 1.5px 8px rgba(145,167,216,0.10);
+        }
+        .btn-primary {
+            background: linear-gradient(92deg,#2979ff 85%,#11b2f0 99%);
+            border: none;
+        }
+        .btn-primary:hover, .btn-primary:focus {
+            background: linear-gradient(95deg,#2057b3 90%,#0998d4 100%);
+        }
+        .btn-outline-secondary {
+            color: #4070a1;
+            border-color: #9fc8ee;
+            background: #f3faff;
+        }
+        .btn-outline-secondary:hover, .btn-outline-secondary:focus {
+            color: #1961b2;
+            border-color: #2979ff;
+            background: #e3edf9;
+        }
+        .alert {
+            border-radius: 12px;
+            font-size: 1.14em;
+        }
+    </style>
+</head>
+<body>
+<div class="wide-container">
+    <div class="header-row">
+        <h2 class="header-title">Flight Booking Prediction</h2>
+        <div class="model-credit">
+            Model built by Soumya Ranjan Patra
+            <!-- Added social icons -->
+            <a href="https://in.linkedin.com/in/sranjanpatra" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                <i class="bi bi-linkedin"></i>
+            </a>
+            <a href="https://github.com/srpanalytics" target="_blank" rel="noopener noreferrer" title="GitHub">
+                <i class="bi bi-github"></i>
+            </a>
+        </div>
+    </div>
+    <div class="subtitle">Predict the likelihood of booking completion using smart machine learning models.</div>
+
+    {% if error %}
+        <div class="alert alert-danger mb-4">{{ error }}</div>
+    {% endif %}
+    {% if prediction %}
+        <div class="alert alert-info fs-5 fw-semibold mb-4" style="letter-spacing:-0.01em;">
+            <span class="text-primary">Prediction:</span> {{ prediction }}
+        </div>
+    {% endif %}
+    <form method="POST" autocomplete="off">
+        <div class="row wide-row">
+            <div class="col">
+                <label class="form-label">Number of Passengers</label>
+                <input type="number" name="num_passengers" class="form-control" min="1" required placeholder="eg. 2" />
+                <div class="form-text">Total passengers in this booking</div>
+            </div>
+            <div class="col">
+                <label class="form-label">Sales Channel</label>
+                <select class="form-select" name="sales_channel" required>
+                    <option value="">-- Select --</option>
+                    <option value="Internet">Internet</option>
+                    <option value="Travel Agent">Travel Agent</option>
+                </select>
+                <div class="form-text">Source of the booking</div>
+            </div>
+            <div class="col">
+                <label class="form-label">Trip Type</label>
+                <select class="form-select" name="trip_type" required>
+                    <option value="">-- Select --</option>
+                    <option value="RoundTrip">Round Trip</option>
+                    <option value="OneWay">One Way</option>
+                </select>
+                <div class="form-text">One way, or return trip</div>
+            </div>
+            <div class="col">
+                <label class="form-label">Purchase Lead (days)</label>
+                <input type="number" name="purchase_lead" class="form-control" min="0" required placeholder="eg. 17" />
+                <div class="form-text">Days between booking and flight</div>
+            </div>
+        </div>
+
+        <div class="row wide-row">
+            <div class="col">
+                <label class="form-label">Length of Stay (days)</label>
+                <input type="number" name="length_of_stay" class="form-control" min="1" required placeholder="eg. 5" />
+                <div class="form-text">Stay at destination</div>
+            </div>
+            <div class="col">
+                <label class="form-label">Flight Hour (0–23)</label>
+                <input type="number" name="flight_hour" class="form-control" min="0" max="23" required placeholder="eg. 10" />
+                <div class="form-text">Hour of flight departure</div>
+            </div>
+            <div class="col">
+                <label class="form-label">Flight Day</label>
+                <select class="form-select" name="flight_day" required>
+                    <option value="">-- Select --</option>
+                    <option value="Mon">Monday</option>
+                    <option value="Tue">Tuesday</option>
+                    <option value="Wed">Wednesday</option>
+                    <option value="Thu">Thursday</option>
+                    <option value="Fri">Friday</option>
+                    <option value="Sat">Saturday</option>
+                    <option value="Sun">Sunday</option>
+                </select>
+            </div>
+            <div class="col">
+                <label class="form-label">Route (e.g., BOMDEL)</label>
+                <input type="text" name="route" class="form-control" required placeholder="eg. BOMDEL" />
+                <div class="form-text">From–To airport codes</div>
+            </div>
+        </div>
+
+        <div class="row wide-row">
+            <div class="col">
+                <label class="form-label">Booking Origin (Country)</label>
+                <input type="text" name="booking_origin" class="form-control" required placeholder="eg. India" />
+                <div class="form-text">Customer's country</div>
+            </div>
+            <div class="col">
+                <label class="form-label">Flight Duration (hours)</label>
+                <input type="number" step="0.1" name="flight_duration" class="form-control" required placeholder="eg. 2.5" />
+            </div>
+            <div class="col">
+                <label class="form-label">Model Choice</label>
+                <select class="form-select" name="model_choice" required>
+                    <option value="">-- Choose a Model --</option>
+                    <option value="Random Forest">Random Forest</option>
+                    <option value="Logistic Regression">Logistic Regression</option>
+                    <option value="Gradient Boosting">Gradient Boosting</option>
+                </select>
+                <div class="form-text">Select ML algorithm</div>
+            </div>
+            <div class="col">
+                <label class="form-label">Add-ons:</label>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" name="extra_baggage" value="1" id="extra_baggage" />
+                    <label class="form-check-label" for="extra_baggage">Extra Baggage</label>
+                </div>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" name="preferred_seat" value="1" id="preferred_seat" />
+                    <label class="form-check-label" for="preferred_seat">Preferred Seat</label>
+                </div>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" name="in_flight_meals" value="1" id="in_flight_meals" />
+                    <label class="form-check-label" for="in_flight_meals">In-flight Meals</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-primary w-50">Predict</button>
+            <a href="/" class="btn btn-outline-secondary w-50">Clear Form</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>
